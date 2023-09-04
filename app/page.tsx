@@ -10,15 +10,16 @@ const Home = () => {
 	const [quote, setQuote] = useState<Quote>();
 
 	useEffect(() => {
-		fetchRandomQuote();
+		getRandomQuote();
 	}, []);
 
-	const fetchRandomQuote = async () => {
+	const getRandomQuote = async () => {
 		setLoading(true);
+
 		const randomQuoteResponse = await quoteApi.quote.getRandomQuote();
 
 		if (randomQuoteResponse.status === 200) {
-			const randomQuote = randomQuoteResponse.data[0];
+			const randomQuote: Quote = randomQuoteResponse.data[0];
 
 			if (
 				randomQuote &&
@@ -29,20 +30,18 @@ const Home = () => {
 			) {
 				setQuote(randomQuote);
 			} else {
-				console.log("Invalid quote format:", randomQuote);
+				console.error("Invalid quote format:", randomQuote);
 			}
 
 			setLoading(false);
 		} else {
-			setLoading(false);
+			console.error("Failed to fetch random quote");
 
-			console.log("Failed to fetch random quote");
+			setLoading(false);
 		}
 	};
 
-	const handleQuoteRefresh = () => {
-		fetchRandomQuote();
-	};
+	const handleQuoteRefresh = () => getRandomQuote();
 
 	const handleQuoteCopy = () => {
 		const quoteToCopy = `${quote?.quote} - ${quote?.author}`;
